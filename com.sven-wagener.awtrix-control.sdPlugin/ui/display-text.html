@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Display Text Settings</title>
+    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+</head>
+<body>
+
+    <sdpi-item label="Text">
+        <sdpi-textfield setting="text" value="Hello Awtrix!" required></sdpi-textfield>
+    </sdpi-item>
+
+    <sdpi-item label="Color">
+        <sdpi-color setting="color" value="#FFFFFF"></sdpi-color>
+    </sdpi-item>
+
+    <sdpi-item label="Duration">
+        <sdpi-textfield setting="duration" value="10" min="1" max="600" required></sdpi-textfield>
+    </sdpi-item>
+
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+
+    <sdpi-item >
+        <sdpi-button onclick="openGeneralSettings(event)">Configure Devices...</sdpi-button>
+    </sdpi-item>
+
+    <script src="js/awtrix3.js"></script>
+    <script src="js/ui/display-text.js"></script>
+</body>
+</html>

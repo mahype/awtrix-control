@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Awtrix Device Settings</title>
+    <link rel="stylesheet" href="css/general-settings.css">
+    <link rel="stylesheet" href="css/sdpi.css">
+    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+    <script src="js/awtrix3.js"></script>
+    <script src="js/ui/general-settings.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="logo-container">
+            <img src="../imgs/plugin/awtrix-logo.svg" alt="Awtrix Logo">
+        </div>
+        
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">IP Addresses</div>
+            <textarea class="sdpi-textarea" id="devices" placeholder="Enter IP addresses, one per line"></textarea>
+        </div>
+        <div class="sdpi-item">
+            <div class="button-group">
+                <button onclick="ipCheck()">Check Devices</button>
+                <button onclick="save()">Save</button>
+            </div>
+        </div>
+        
+        <div id="ip_checker" class="ip-checker">
+            <div class="sdpi-heading">Device Check Results <img id="loading_icon" src="img/loading.gif" alt="Loading..."></div>
+            <div id="ip_checker_results" class="ip-checker-results">
+                <!-- Hier werden die Ergebnisse der Gerätesuche angezeigt -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

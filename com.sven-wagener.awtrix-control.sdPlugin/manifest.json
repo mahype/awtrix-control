@@ -1,0 +1,47 @@
+{
+	"Name": "Awtrix Control",
+	"Version": "0.1.0.0",
+	"Author": "Sven Wagener",
+	"Actions": [
+		{
+			"Name": "Power Control",
+			"UUID": "com.sven-wagener.awtrix-control.power",
+			"Icon": "imgs/actions/awtrix-power/icon",
+			"Tooltip": "Turn your Awtrix device on or off",
+			"PropertyInspectorPath": "ui/power-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-power/key",
+					"TitleAlignment": "middle"
+				}
+			]
+		}
+	],
+	"Category": "Awtrix Control",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"Description": "Control your Awtrix device.",
+	"Icon": "imgs/plugin/icon.svg",
+	"SDKVersion": 2,
+	"Software": {
+		"MinimumVersion": "6.4"
+	},
+	"OS": [
+		{
+			"Platform": "mac",
+			"MinimumVersion": "12"
+		},
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "20",
+		"Debug": "enabled"
+	},
+	"UUID": "com.sven-wagener.awtrix-control"
+}

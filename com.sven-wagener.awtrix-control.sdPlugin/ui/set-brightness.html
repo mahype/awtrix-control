@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Set Brightness Settings</title>
+    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+</head>
+
+<body>
+
+    <sdpi-item label="Brightness">
+        <sdpi-range setting="brightness" min="0" max="100" step="5" showlabels>
+        </sdpi-range>
+    </sdpi-item>
+
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+
+    <sdpi-item>
+        <sdpi-button onclick="openGeneralSettings(event)">Configure Devices...</sdpi-button>
+    </sdpi-item>
+
+    <script src="js/awtrix3.js"></script>
+    <script src="js/ui/set-brightness.js"></script>
+</body>
+
+</html>
