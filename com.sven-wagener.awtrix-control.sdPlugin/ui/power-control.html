@@ -4,7 +4,48 @@
     <meta charset="utf-8" />
     <title>Power Control Settings</title>
     <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+    <script src="../lib/awtrixScan.js"></script>
+    <script src="../js/awtrix3.js"></script>
     <script src="power-control.js"></script>
+    <style>
+        .scan-status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #000;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            display: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        .scan-status span {
+            color: #0f0;
+            font-weight: bold;
+        }
+        .terminal-output {
+            margin-top: 5px;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #000;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+        }
+        .found-device {
+            color: #0f0;
+            margin: 2px 0;
+        }
+        .found-device::before {
+            content: "► ";
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <sdpi-item label="Device">
@@ -20,9 +61,13 @@
             <option value="off">Turn Off</option>
         </sdpi-select>
     </sdpi-item>
-
+    
     <sdpi-item>
-        <sdpi-button onclick="openGeneralSettings(event)">Configure Devices...</sdpi-button>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">Scanning: <span id="currentIp">-</span></div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Hier werden gefundene Geräte sofort angezeigt -->
+        </div>
     </sdpi-item>
 
     <script src="js/awtrix3.js"></script>

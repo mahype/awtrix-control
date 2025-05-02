@@ -6,7 +6,7 @@ import os from 'os';
  */
 // Passe die Funktion an, um nur die IP-Adressen in einem Array zurückzugeben
 // Aktualisiere die Funktion, um TypeScript-Typen zu verwenden
-function getIpAddresses(): string[] {
+function getMachineIPs(): string[] {
   const interfaces = os.networkInterfaces();
   const ipAddresses: string[] = [];
 
@@ -21,4 +21,4 @@ function getIpAddresses(): string[] {
   return ipAddresses;
 }
 
-export default getIpAddresses;
+export default getMachineIPs;
