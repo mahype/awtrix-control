@@ -6,13 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /**
- * Function to open the general settings window
- */
-function openGeneralSettings(event) {
-    // Implementation of openGeneralSettings
-}
-
-/**
  * Wrapper-Funktion für scanForAwtrixDevices mit Fortschrittsanzeige
  * @param {string[]} ips - Array von IP-Adressen
  * @param {function} progressCallback - Callback-Funktion für Fortschrittsupdates (0-100%)
@@ -26,6 +19,7 @@ async function scanWithProgress(ips, progressCallback, currentIpCallback, device
     const allDevices = [];
     
     // Berechne die Gesamtzahl der zu scannenden IPs
+    // Wir scannen das gesamte Subnetz (1-254), daher ist die Gesamtzahl ipArray.length * 254
     const totalIps = ipArray.length * 254;
     let scannedIps = 0;
     
@@ -47,9 +41,12 @@ async function scanWithProgress(ips, progressCallback, currentIpCallback, device
             currentIpCallback(targetIp);
             
             try {
+                // Debug-Info: Zeige an, welche IP gerade geprüft wird
+                console.log(`Prüfe IP: ${targetIp}`);
+                
                 // Versuche, die AWTRIX-API zu erreichen
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 500); // 500ms Timeout
+                const timeoutId = setTimeout(() => controller.abort(), 1000); // 1000ms Timeout
 
                 const response = await fetch(`http://${targetIp}/api/stats`, {
                     method: 'GET',
@@ -58,12 +55,35 @@ async function scanWithProgress(ips, progressCallback, currentIpCallback, device
 
                 clearTimeout(timeoutId);
 
+                // Debug-Info: Zeige den Status der Antwort an
+                console.log(`Antwort von ${targetIp}: Status ${response.status}, OK: ${response.ok}`);
+                
                 if (response.ok) {
-                    allDevices.push(targetIp);
-                    // Benachrichtige über gefundenes Gerät
-                    deviceFoundCallback(targetIp);
+                    // Versuche, die Antwort als JSON zu parsen
+                    try {
+                        const data = await response.json();
+                        
+                        // Debug-Info: Zeige die Antwortdaten an
+                        console.log(`Antwortdaten von ${targetIp}:`, data);
+                        
+                        // Überprüfe, ob es sich um ein AWTRIX-Gerät handelt
+                        // AWTRIX-Geräte haben typischerweise bestimmte Eigenschaften in der Antwort
+                        if (data && (data.AWTRIX !== undefined || data.version !== undefined || data.matrixType !== undefined)) {
+                            // Debug-Info: Zeige an, dass ein Gerät gefunden wurde
+                            console.log(`AWTRIX-Gerät gefunden: ${targetIp}`);
+                            allDevices.push(targetIp);
+                            // Benachrichtige über gefundenes Gerät
+                            deviceFoundCallback(targetIp);
+                        } else {
+                            console.log(`Kein AWTRIX-Gerät unter ${targetIp} (ungültige Antwortdaten)`);
+                        }
+                    } catch (jsonError) {
+                        console.log(`Fehler beim Parsen der JSON-Antwort von ${targetIp}: ${jsonError.message}`);
+                    }
                 }
             } catch (error) {
+                // Debug-Info: Zeige den Fehler an
+                console.log(`Fehler bei ${targetIp}: ${error.name} - ${error.message}`);
                 // Ignoriere Fehler - kein AWTRIX-Gerät unter dieser IP
             }
             
@@ -94,13 +114,13 @@ async function searchForDevices(event) {
         const scanStatus = document.getElementById('scanStatus');
         if (scanStatus) {
             scanStatus.style.display = 'block';
+            scanStatus.innerHTML = 'Scanning: <span id="currentIp">-</span>';
         }
         
-        // Zeige den Terminal-Output an und leere ihn
+        // Verstecke den Terminal-Output, da wir ihn nicht mehr benötigen
         const terminalOutput = document.getElementById('terminalOutput');
         if (terminalOutput) {
-            terminalOutput.style.display = 'block';
-            terminalOutput.innerHTML = '<div class="found-device">Suche...</div>';
+            terminalOutput.style.display = 'none';
         }
 
         // Get the global settings to access the IP addresses
@@ -129,20 +149,18 @@ async function searchForDevices(event) {
             // Zähle die gefundenen Geräte
             deviceCount++;
             
-            // Aktualisiere den Terminal-Output
-            const terminalOutput = document.getElementById('terminalOutput');
-            if (terminalOutput) {
-                terminalOutput.innerHTML = `<div class="found-device">Gefunden: ${deviceCount}</div>`;
-                
+            // Aktualisiere den Scan-Status mit der gefundenen IP
+            const scanStatus = document.getElementById('scanStatus');
+            if (scanStatus) {
                 // Füge das neueste Gerät hinzu
                 const deviceEntry = document.createElement('div');
                 deviceEntry.className = 'found-device';
                 deviceEntry.textContent = ip;
-                terminalOutput.appendChild(deviceEntry);
-                
-                // Aktualisiere das Device-Dropdown
-                updateDeviceDropdown(ip);
+                scanStatus.appendChild(deviceEntry);
             }
+            
+            // Aktualisiere das Device-Dropdown
+            updateDeviceDropdown(ip);
         };
         
         // Funktion zum Aktualisieren des Device-Dropdowns
@@ -182,57 +200,84 @@ async function searchForDevices(event) {
         
         console.log("Found AWTRIX devices:", foundDevices);
 
-        // Speichere die gefundenen Geräte in den globalSettings
-        try {
-            // Hole aktuelle globalSettings, um andere Einstellungen nicht zu überschreiben
-            const currentSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
-            
-            // Aktualisiere die devices-Eigenschaft
-            const updatedSettings = {
-                ...currentSettings,
-                devices: foundDevices
-            };
-            
-            // Speichere die aktualisierten Einstellungen
-            await SDPIComponents.streamDeckClient.setGlobalSettings(updatedSettings);
-            console.log("Devices saved to globalSettings:", foundDevices);
-        } catch (error) {
-            console.error("Error saving devices to globalSettings:", error);
-        }
-
         // Re-enable the button
         if (searchButton) {
             searchButton.disabled = false;
             searchButton.textContent = 'Search for Devices';
         }
-        
-        // Aktualisiere den Terminal-Output mit dem Endergebnis
-        if (terminalOutput) {
-            if (foundDevices.length > 0) {
-                terminalOutput.innerHTML = `<div class="found-device">Fertig: ${foundDevices.length} gefunden</div>`;
-                
-                // Zeige alle gefundenen Geräte an
-                foundDevices.forEach(ip => {
-                    const deviceEntry = document.createElement('div');
-                    deviceEntry.className = 'found-device';
-                    deviceEntry.textContent = ip;
-                    terminalOutput.appendChild(deviceEntry);
-                });
-            } else {
-                terminalOutput.innerHTML = '<div class="found-device" style="color: #ff5555;">Keine Geräte gefunden</div>';
-            }
-        }
-        
-        // Verstecke den Scan-Status
+
+        // Entferne den Scan-Status
         if (scanStatus) {
             scanStatus.style.display = 'none';
         }
 
-        // Show a message with the results
-        if (foundDevices.length > 0) {
-            alert(`${foundDevices.length} AWTRIX-Gerät(e) gefunden.`);
-        } else {
+        // Wenn keine Geräte gefunden wurden, zeige nur einen Alert an und beende die Funktion
+        if (foundDevices.length === 0) {
             alert("Keine AWTRIX-Geräte gefunden.");
+            return;
+        }
+
+        // Zeige einen Confirm-Dialog mit den Ergebnissen
+        const confirmMessage = `${foundDevices.length} AWTRIX-Gerät(e) gefunden. Möchten Sie diese Geräte übernehmen?`;
+        const shouldSaveDevices = confirm(confirmMessage);
+        
+        // Wenn der Benutzer den Dialog bestätigt, speichere die Geräte
+        if (shouldSaveDevices) {
+            try {
+                // Hole aktuelle globalSettings, um andere Einstellungen nicht zu überschreiben
+                const currentSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
+                
+                // Aktualisiere die devices-Eigenschaft
+                const updatedSettings = {
+                    ...currentSettings,
+                    devices: foundDevices
+                };
+                
+                // Speichere die aktualisierten Einstellungen
+                await SDPIComponents.streamDeckClient.setGlobalSettings(updatedSettings);
+                console.log("Devices saved to globalSettings:", foundDevices);
+                
+                // Aktualisiere die Device-Liste im Formular mit allen gefundenen Geräten
+                const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+                if (deviceSelect && foundDevices.length > 0) {
+                    // Leere die aktuelle Liste, behalte aber die erste Option (falls vorhanden)
+                    while (deviceSelect.children.length > 1) {
+                        deviceSelect.removeChild(deviceSelect.lastChild);
+                    }
+                    
+                    // Füge alle gefundenen Geräte hinzu
+                    foundDevices.forEach(ip => {
+                        let optionExists = false;
+                        
+                        // Prüfe, ob die IP bereits als Option existiert
+                        for (const option of deviceSelect.children) {
+                            if (option.value === ip) {
+                                optionExists = true;
+                                break;
+                            }
+                        }
+                        
+                        // Füge die IP als Option hinzu, wenn sie noch nicht existiert
+                        if (!optionExists) {
+                            const option = document.createElement('option');
+                            option.value = ip;
+                            option.textContent = ip;
+                            deviceSelect.appendChild(option);
+                        }
+                    });
+                    
+                    // Wähle das erste gefundene Gerät aus, wenn noch keines ausgewählt ist
+                    if (!deviceSelect.value && foundDevices.length > 0) {
+                        deviceSelect.value = foundDevices[0];
+                        deviceSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+            } catch (error) {
+                console.error("Error saving devices to globalSettings:", error);
+                alert("Fehler beim Speichern der Geräte: " + error.message);
+            }
+        } else {
+            console.log("User cancelled saving devices");
         }
     } catch (error) {
         console.error("Error searching for devices:", error);
@@ -245,16 +290,13 @@ async function searchForDevices(event) {
             searchButton.textContent = 'Search for Devices';
         }
         
-        // Aktualisiere den Terminal-Output mit der Fehlermeldung
-        const terminalOutput = document.getElementById('terminalOutput');
-        if (terminalOutput) {
-            terminalOutput.innerHTML = `<div class="found-device" style="color: #ff5555;">Fehler: ${error.message}</div>`;
-        }
-        
-        // Verstecke den Scan-Status
+        // Aktualisiere den Scan-Status mit der Fehlermeldung und entferne ihn nach 3 Sekunden
         const scanStatus = document.getElementById('scanStatus');
         if (scanStatus) {
-            scanStatus.style.display = 'none';
+            scanStatus.innerHTML = `<div class="found-device" style="color: #ff5555;">Fehler: ${error.message}</div>`;
+            setTimeout(() => {
+                scanStatus.style.display = 'none';
+            }, 3000);
         }
     }
 }
