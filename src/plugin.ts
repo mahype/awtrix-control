@@ -1,6 +1,11 @@
 import streamDeck, { LogLevel } from "@elgato/streamdeck"; 
  
 import { PowerControl } from "./actions/power-control"; 
+import { TemperatureSensor } from "./actions/temperature-sensor";
+import { HumiditySensor } from "./actions/humidity-sensor";
+import { LuxSensor } from "./actions/lux-sensor";
+import { BatterySensor } from "./actions/battery-sensor";
+import { WifiSensor } from "./actions/wifi-sensor";
 import getIpAddresses from "./lib/ip"; 
  
 // We can enable "trace" logging so that all messages between the Stream Deck, and the plugin are recorded. When storing sensitive information 
@@ -17,7 +22,12 @@ streamDeck.settings.getGlobalSettings().then((settings) => {
   });
 }); 
  
-// Register the increment action. 
+// Register all actions
 streamDeck.actions.registerAction(new PowerControl()); 
+streamDeck.actions.registerAction(new TemperatureSensor());
+streamDeck.actions.registerAction(new HumiditySensor());
+streamDeck.actions.registerAction(new LuxSensor());
+streamDeck.actions.registerAction(new BatterySensor());
+streamDeck.actions.registerAction(new WifiSensor());
  
 streamDeck.connect();

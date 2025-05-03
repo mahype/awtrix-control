@@ -28,11 +28,7 @@ export class PowerControl extends SingletonAction<PowerControlSettings> {
       
       if (action === "toggle") {
         streamDeck.logger.info(`Toggling power for device: ${device}`);
-        const result = await awtrix.togglePower();
-        streamDeck.logger.info(`Toggle result: ${JSON.stringify(result)}`);
-        const stats = await awtrix.getStats();
-        streamDeck.logger.info(stats);
-        
+        await awtrix.togglePower();
         // Neuen Power-Zustand nach dem Toggle ermitteln und loggen
         try {
           const newPowerState = await awtrix.getPowerState();

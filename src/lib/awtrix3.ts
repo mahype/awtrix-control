@@ -133,8 +133,18 @@ export class Awtrix3 {
    * @returns Battery level
    */
   async getBattery(): Promise<number> {
-    const stats = await this.getStats();
-    return stats.bat;
+    try {
+      const stats = await this.getStats();
+      // Stellen wir sicher, dass wir eine gültige Zahl haben
+      if (stats && typeof stats.bat === 'number') {
+        return stats.bat;
+      }
+      // Fallback, wenn der Wert nicht vorhanden ist
+      return 0;
+    } catch (error) {
+      console.error(`Error getting battery level: ${error}`);
+      return 0;
+    }
   }
 
   /**
@@ -202,8 +212,18 @@ export class Awtrix3 {
    * @returns Signal strength in dBm
    */
   async getWifi(): Promise<number> {
-    const stats = await this.getStats();
-    return stats.wifi;
+    try {
+      const stats = await this.getStats();
+      // Stellen wir sicher, dass wir eine gültige Zahl haben
+      if (stats && typeof stats.wifi === 'number') {
+        return stats.wifi;
+      }
+      // Fallback, wenn der Wert nicht vorhanden ist
+      return 0;
+    } catch (error) {
+      console.error(`Error getting WiFi signal strength: ${error}`);
+      return 0;
+    }
   }
 
   /**

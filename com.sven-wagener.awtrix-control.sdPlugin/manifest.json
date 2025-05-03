@@ -18,13 +18,93 @@
 					"TitleAlignment": "middle"
 				}
 			]
+		},
+		{
+			"Name": "Temperature Sensor",
+			"UUID": "com.sven-wagener.awtrix-control.temperature",
+			"Icon": "imgs/actions/awtrix-temperature/icon",
+			"Tooltip": "Display the temperature from your Awtrix device",
+			"PropertyInspectorPath": "ui/temperature-sensor.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-temperature/key",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "Humidity Sensor",
+			"UUID": "com.sven-wagener.awtrix-control.humidity",
+			"Icon": "imgs/actions/awtrix-humidity/icon",
+			"Tooltip": "Display the humidity from your Awtrix device",
+			"PropertyInspectorPath": "ui/humidity-sensor.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-humidity/key",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "Lux Sensor",
+			"UUID": "com.sven-wagener.awtrix-control.lux",
+			"Icon": "imgs/actions/awtrix-lux/icon",
+			"Tooltip": "Display the light intensity from your Awtrix device",
+			"PropertyInspectorPath": "ui/lux-sensor.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-lux/key",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "Battery Sensor",
+			"UUID": "com.sven-wagener.awtrix-control.battery",
+			"Icon": "imgs/actions/awtrix-battery/icon",
+			"Tooltip": "Display the battery level from your Awtrix device",
+			"PropertyInspectorPath": "ui/battery-sensor.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-battery/key",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "WiFi Signal Sensor",
+			"UUID": "com.sven-wagener.awtrix-control.wifi",
+			"Icon": "imgs/actions/awtrix-wifi/icon",
+			"Tooltip": "Display the WiFi signal strength from your Awtrix device",
+			"PropertyInspectorPath": "ui/wifi-sensor.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-wifi/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
-	"Category": "Awtrix Control",
+	"Category": "Awtrix",
 	"CategoryIcon": "imgs/plugin/category-icon",
 	"CodePath": "bin/plugin.js",
 	"Description": "Control your Awtrix device.",
-	"Icon": "imgs/plugin/icon.svg",
+	"Icon": "imgs/plugin/icon",
 	"SDKVersion": 2,
 	"Software": {
 		"MinimumVersion": "6.4"
@@ -32,7 +112,7 @@
 	"OS": [
 		{
 			"Platform": "mac",
-			"MinimumVersion": "12"
+			"MinimumVersion": "10.15"
 		},
 		{
 			"Platform": "windows",
