@@ -557,6 +557,16 @@ export class Awtrix3 {
       duration: options.duration || 10
     });
   }
+
+  /**
+   * Set the overlay effect for the Awtrix device.
+   * 
+   * @param effect The effect name to set as overlay
+   * @returns A promise that resolves when the overlay effect has been set
+   */
+  async setOverlayEffect(effect: "clear" | "snow" | "rain" | "drizzle" | "storm" | "thunder" | "frost"): Promise<any> {
+    return await this.post("/api/settings", { OVERLAY: effect });
+  }
 }
 
 /**

@@ -146,6 +146,22 @@
 					"TitleAlignment": "middle"
 				}
 			]
+		},
+		{
+			"Name": "Overlay Effect",
+			"UUID": "com.sven-wagener.awtrix-control.overlay-effect",
+			"Icon": "imgs/actions/awtrix-overlay-effect/icon",
+			"Tooltip": "Set an overlay effect on your Awtrix device",
+			"PropertyInspectorPath": "ui/overlay-effect-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-overlay-effect/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",

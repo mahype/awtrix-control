@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Overlay Effect Control</title>
+    <script src="../lib/awtrix-devices.js"></script>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
+</head>
+<body>
+    <sdpi-item label="Overlay Effect">
+        <sdpi-select setting="effect" value="clear">
+            <option value="clear">No Effect</option>
+            <option value="snow">Snow</option>
+            <option value="rain">Rain</option>
+            <option value="drizzle">Drizzle</option>
+            <option value="storm">Storm</option>
+            <option value="thunder">Thunder</option>
+            <option value="frost">Frost</option>
+        </sdpi-select>
+    </sdpi-item>
+    
+    <!-- Device Select -->
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <option>Please select...</option>
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+    
+    <sdpi-item>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">
+            <div id="ipRanges"></div>
+            Scanning: <span id="currentIp">-</span>
+        </div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Devices found will be displayed here -->
+        </div>
+    </sdpi-item>
+    <!-- End of Device Select -->
+</body>
+</html>
