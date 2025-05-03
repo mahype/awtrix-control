@@ -168,6 +168,17 @@ async function searchForDevices(event) {
         // Get the global settings to access the IP addresses
         const globalSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
 
+        // Display IP ranges that will be scanned
+        const ipRangesElement = document.getElementById('ipRanges');
+        if (ipRangesElement && globalSettings.ipAddresses && globalSettings.ipAddresses.length > 0) {
+            const subnets = globalSettings.ipAddresses.map(ip => {
+                const parts = ip.split('.');
+                return parts.length === 4 ? `${parts[0]}.${parts[1]}.${parts[2]}.*` : ip;
+            });
+            ipRangesElement.textContent = `IP range: ${subnets.join(', ')}`;
+            ipRangesElement.style.marginBottom = '8px';
+        }
+
         // Progress update callback
         const updateProgress = (progress) => {
             if (searchButton) {
