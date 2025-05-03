@@ -114,7 +114,11 @@ async function searchForDevices(event) {
         const scanStatus = document.getElementById('scanStatus');
         if (scanStatus) {
             scanStatus.style.display = 'block';
-            scanStatus.innerHTML = 'Scanning: <span id="currentIp">-</span>';
+            // Wir müssen nur den Inhalt des ticker-content-Elements aktualisieren
+            const tickerContent = scanStatus.querySelector('.ticker-content');
+            if (tickerContent) {
+                tickerContent.innerHTML = '<span style="color: #ff5252;">S</span><span style="color: #ffb142;">c</span><span style="color: #ffeb3b;">a</span><span style="color: #66bb6a;">n</span><span style="color: #29b6f6;">n</span><span style="color: #7e57c2;">i</span><span style="color: #ec407a;">n</span><span style="color: #42a5f5;">g</span>: <span id="currentIp">-</span>';
+            }
         }
         
         // Verstecke den Terminal-Output, da wir ihn nicht mehr benötigen
