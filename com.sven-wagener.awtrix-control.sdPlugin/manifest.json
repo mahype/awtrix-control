@@ -198,6 +198,22 @@
 					"TitleAlignment": "bottom"
 				}
 			]
+		},
+		{
+			"Name": "Settings",
+			"UUID": "com.sven-wagener.awtrix-control.settings",
+			"Icon": "imgs/actions/awtrix-settings/icon",
+			"Tooltip": "Open the Settings page of your Awtrix device",
+			"PropertyInspectorPath": "ui/settings-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-settings/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",

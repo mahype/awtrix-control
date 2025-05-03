@@ -11,6 +11,7 @@ import { PreviousAppControl } from "./actions/previousapp-control";
 import { NotifyDismissControl } from "./actions/notify-dismiss-control";
 import { OverlayEffectControl } from "./actions/overlay-effect-control";
 import { LiveViewControl } from "./actions/liveview-control";
+import { SettingsControl } from "./actions/settings-control";
 import getIpAddresses from "./lib/ip"; 
 import { BrightnessControl } from "./actions/brightness-control";
  
@@ -41,5 +42,6 @@ streamDeck.actions.registerAction(new NotifyDismissControl());
 streamDeck.actions.registerAction(new OverlayEffectControl());
 streamDeck.actions.registerAction(new BrightnessControl());
 streamDeck.actions.registerAction(new LiveViewControl());
+streamDeck.actions.registerAction(new SettingsControl());
  
 streamDeck.connect();
