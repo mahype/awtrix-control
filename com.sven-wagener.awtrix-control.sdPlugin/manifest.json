@@ -98,6 +98,54 @@
 					"TitleAlignment": "bottom"
 				}
 			]
+		},
+		{
+			"Name": "Next App",
+			"UUID": "com.sven-wagener.awtrix-control.nextapp",
+			"Icon": "imgs/actions/awtrix-nextapp/icon",
+			"Tooltip": "Switch to the next app on your Awtrix device",
+			"PropertyInspectorPath": "ui/nextapp-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-nextapp/key",
+					"TitleAlignment": "middle"
+				}
+			]
+		},
+		{
+			"Name": "Previous App",
+			"UUID": "com.sven-wagener.awtrix-control.previousapp",
+			"Icon": "imgs/actions/awtrix-previousapp/icon",
+			"Tooltip": "Switch to the previous app on your Awtrix device",
+			"PropertyInspectorPath": "ui/previousapp-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-previousapp/key",
+					"TitleAlignment": "middle"
+				}
+			]
+		},
+		{
+			"Name": "Dismiss Notification",
+			"UUID": "com.sven-wagener.awtrix-control.notify-dismiss",
+			"Icon": "imgs/actions/awtrix-notify-dismiss/icon",
+			"Tooltip": "Dismiss the current notification on your Awtrix device",
+			"PropertyInspectorPath": "ui/notify-dismiss-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-notify-dismiss/key",
+					"TitleAlignment": "middle"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",

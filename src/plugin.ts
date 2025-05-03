@@ -6,6 +6,9 @@ import { HumiditySensor } from "./actions/humidity-sensor";
 import { LuxSensor } from "./actions/lux-sensor";
 import { BatterySensor } from "./actions/battery-sensor";
 import { WifiSensor } from "./actions/wifi-sensor";
+import { NextAppControl } from "./actions/nextapp-control";
+import { PreviousAppControl } from "./actions/previousapp-control";
+import { NotifyDismissControl } from "./actions/notify-dismiss-control";
 import getIpAddresses from "./lib/ip"; 
  
 // We can enable "trace" logging so that all messages between the Stream Deck, and the plugin are recorded. When storing sensitive information 
