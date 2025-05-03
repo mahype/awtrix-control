@@ -56,7 +56,26 @@ export class Awtrix3 {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json() as T;
+    // Prüfe, ob die Antwort ein einfacher Text ist (wie "OK")
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("text/plain")) {
+      const text = await response.text();
+      // Gib ein Objekt zurück, das den Text enthält
+      return { success: true, message: text } as unknown as T;
+    }
+
+    try {
+      return await response.json() as T;
+    } catch (error) {
+      // Wenn das JSON-Parsing fehlschlägt, versuche den Text zu lesen
+      const text = await response.text();
+      // Wenn der Text "OK" ist, gib ein Erfolgsobjekt zurück
+      if (text === "OK") {
+        return { success: true, message: "OK" } as unknown as T;
+      }
+      // Ansonsten wirf den ursprünglichen Fehler
+      throw error;
+    }
   }
 
   /**
@@ -389,9 +408,92 @@ export class Awtrix3 {
    * @returns Response from the API
    */
   async togglePower(): Promise<any> {
+    try {
+      const isPoweredOn = await this.getPowerState();
+      return await this.setPower(!isPoweredOn);
+    } catch (error) {
+      // Wenn die Zustandsabfrage fehlschlägt, verwenden wir den Toggle-Befehl
+      return await this.post("/api/power", { power: "toggle" });
+    }
+  }
+
+  /**
+   * Get the power state of the Awtrix3 device.
+   * 
+   * @returns True if the device is powered on, false otherwise
+   */
+  async getPowerState(): Promise<boolean> {
+    try {
+      // Versuche, die Stats abzurufen
+      const stats = await this.getStats();
+      
+      // Verwende die matrix-Eigenschaft als Indikator für den Power-Zustand
+      return stats.matrix === true;
+    } catch (error) {
+      // Wenn die Stats-Abfrage fehlschlägt, ist das Gerät wahrscheinlich ausgeschaltet oder nicht erreichbar
+      return false;
+    }
+  }
+
+  /**
+   * Get the current screen content as a base64 encoded image.
+   * 
+   * @returns Base64 encoded image of the current screen
+   */
+  async getScreen(): Promise<string> {
+    return await this.get<string>("/api/screen");
+  }
+
+  /**
+   * Get the current app that is displayed on the device.
+   * 
+   * @returns The name of the current app
+   */
+  async getCurrentApp(): Promise<string> {
     const stats = await this.getStats();
-    const currentState = stats.power === true;
-    return await this.setPower(!currentState);
+    return stats.app;
+  }
+
+  /**
+   * Set the color of the AWTRIX device's indicator LED.
+   * 
+   * @param r Red component (0-255)
+   * @param g Green component (0-255)
+   * @param b Blue component (0-255)
+   * @returns Response from the API
+   */
+  async setIndicatorColor(r: number, g: number, b: number): Promise<any> {
+    return await this.post("/settings", { ILED_COLOR: [r, g, b] });
+  }
+
+  /**
+   * Set the color of the AWTRIX device's matrix.
+   * 
+   * @param r Red component (0-255)
+   * @param g Green component (0-255)
+   * @param b Blue component (0-255)
+   * @returns Response from the API
+   */
+  async setMatrixColor(r: number, g: number, b: number): Promise<any> {
+    return await this.post("/settings", { MAT_COLOR: [r, g, b] });
+  }
+
+  /**
+   * Reboot the AWTRIX device.
+   * 
+   * @returns Response from the API
+   */
+  async reboot(): Promise<any> {
+    return await this.post("/api/reboot");
+  }
+
+  /**
+   * Get a list of all installed apps.
+   * 
+   * @returns Array of app objects
+   */
+  async getApps(): Promise<any[]> {
+    return await this.get<any[]>("/api/apps");
   }
 
   /**
