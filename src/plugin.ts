@@ -11,6 +11,7 @@ import { PreviousAppControl } from "./actions/previousapp-control";
 import { NotifyDismissControl } from "./actions/notify-dismiss-control";
 import { OverlayEffectControl } from "./actions/overlay-effect-control";
 import getIpAddresses from "./lib/ip"; 
+import { BrightnessControl } from "./actions/brightness-control";
  
 // We can enable "trace" logging so that all messages between the Stream Deck, and the plugin are recorded. When storing sensitive information 
 streamDeck.logger.setLevel(LogLevel.TRACE); 
@@ -37,5 +38,6 @@ streamDeck.actions.registerAction(new NextAppControl());
 streamDeck.actions.registerAction(new PreviousAppControl());
 streamDeck.actions.registerAction(new NotifyDismissControl());
 streamDeck.actions.registerAction(new OverlayEffectControl());
+streamDeck.actions.registerAction(new BrightnessControl());
  
 streamDeck.connect();

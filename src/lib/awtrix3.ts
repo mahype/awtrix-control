@@ -163,7 +163,7 @@ export class Awtrix3 {
    * @returns Response
    */
   async setBrightness(brightness: number): Promise<any> {
-    return await this.post("/settings", { BRI: brightness });
+    return await this.post("/api/settings", { BRI: brightness });
   }
 
   /**
