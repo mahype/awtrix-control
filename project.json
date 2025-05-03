@@ -1,0 +1,26 @@
+{
+  "project": {
+    "name": "AWTRIX Control",
+    "description": "Stream Deck Plugin zur Steuerung von AWTRIX 3 Geräten",
+    "version": "1.0.0",
+    "author": "Sven Wagener"
+  },
+  "documentation": {
+    "awtrix3": {
+      "main": "https://awtrix.blueforcer.de/",
+      "api": "https://blueforcer.github.io/awtrix3/",
+      "github": "https://github.com/Blueforcer/awtrix3"
+    },
+    "streamDeck": {
+      "main": "https://developer.elgato.com/documentation/stream-deck/",
+      "javascriptApi": "https://developer.elgato.com/documentation/stream-deck/sdk/javascript-api/",
+      "propertyInspector": "https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/",
+      "github": "https://github.com/elgatosf/streamdeck-sdk"
+    },
+    "sdpiComponents": {
+      "api": "https://sdpi-components.dev/docs/getting-started/get-started",
+      "github": "https://github.com/elgatosf/streamdeck-sdpi-components",
+      "examples": "https://github.com/elgatosf/streamdeck-sdpi-components/tree/main/examples"
+    }
+  }
+}
