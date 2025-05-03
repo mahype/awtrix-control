@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Brightness Control</title>
+    <script src="../lib/awtrix-devices.js"></script>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
+</head>
+<body>
+    <sdpi-item label="Brightness">
+        <sdpi-range setting="brightness" value="128" min="0" max="255" step="1">
+            <span class="range-label">0%</span>
+            <span class="range-label" style="text-align: center;">50%</span>
+            <span class="range-label" style="text-align: right;">100%</span>
+        </sdpi-range>
+    </sdpi-item>
+    
+    <sdpi-item label="Step Size">
+        <sdpi-select setting="tickSize">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </sdpi-select>
+    </sdpi-item>
+    
+    <!-- Device Select -->
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <option>Please select...</option>
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+    
+    <sdpi-item>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">
+            <div id="ipRanges"></div>
+            Scanning: <span id="currentIp">-</span>
+        </div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Devices found will be displayed here -->
+        </div>
+    </sdpi-item>
+    <!-- End of Device Select -->
+</body>
+</html>

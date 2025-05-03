@@ -162,6 +162,26 @@
 					"TitleAlignment": "bottom"
 				}
 			]
+		},
+		{
+			"Name": "Brightness Control",
+			"UUID": "com.sven-wagener.awtrix-control.brightness",
+			"Icon": "imgs/actions/awtrix-brightness/icon",
+			"Tooltip": "Control the brightness of your Awtrix device",
+			"PropertyInspectorPath": "ui/brightness-control.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"Encoder": {
+				"layout": "$B1"
+			},
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-brightness/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",
