@@ -5,48 +5,62 @@ document.addEventListener("DOMContentLoaded", function () {
     })();
 });
 
+// Variable to track if a search is in progress and store the abort controller
+let searchInProgress = false;
+let searchAbortController = null;
+
 /**
- * Wrapper-Funktion für scanForAwtrixDevices mit Fortschrittsanzeige
- * @param {string[]} ips - Array von IP-Adressen
- * @param {function} progressCallback - Callback-Funktion für Fortschrittsupdates (0-100%)
- * @param {function} currentIpCallback - Callback-Funktion für Updates der aktuell gescannten IP
- * @param {function} deviceFoundCallback - Callback-Funktion für gefundene Geräte
- * @returns {Promise<string[]>} - Array mit gefundenen AWTRIX-Geräten
+ * Wrapper function for scanning AWTRIX devices with progress display
+ * @param {string[]} ips - Array of IP addresses
+ * @param {function} progressCallback - Callback function for progress updates (0-100%)
+ * @param {function} currentIpCallback - Callback function for updates of the currently scanned IP
+ * @param {function} deviceFoundCallback - Callback function for found devices
+ * @param {AbortController} abortController - AbortController for canceling the search
+ * @returns {Promise<string[]>} - Array with found AWTRIX devices
  */
-async function scanWithProgress(ips, progressCallback, currentIpCallback, deviceFoundCallback) {
-    // Stelle sicher, dass ips ein Array ist
+async function scanWithProgress(ips, progressCallback, currentIpCallback, deviceFoundCallback, abortController) {
+    // Ensure ips is an array
     const ipArray = Array.isArray(ips) ? ips : [ips];
     const allDevices = [];
     
-    // Berechne die Gesamtzahl der zu scannenden IPs
-    // Wir scannen das gesamte Subnetz (1-254), daher ist die Gesamtzahl ipArray.length * 254
+    // Calculate the total number of IPs to scan
+    // We scan the entire subnet (1-254), so the total number is ipArray.length * 254
     const totalIps = ipArray.length * 254;
     let scannedIps = 0;
     
-    // Für jede IP-Adresse
+    // For each IP address
     for (const ip of ipArray) {
-        // Extrahiere die ersten drei Oktette der IP-Adresse
+        // Extract the first three octets of the IP address
         const ipParts = ip.split('.');
         if (ipParts.length !== 4) {
-            continue; // Überspringe ungültige IP-Adressen
+            continue; // Skip invalid IP addresses
         }
 
         const subnet = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}`;
 
-        // Durchsuche alle möglichen IP-Adressen im Subnetz (1-254)
+        // Scan all possible IP addresses in the subnet (1-254)
         for (let i = 1; i <= 254; i++) {
+            // Check if the search was canceled
+            if (abortController.signal.aborted) {
+                console.log("Search was canceled");
+                return allDevices;
+            }
+            
             const targetIp = `${subnet}.${i}`;
             
-            // Aktualisiere die aktuell gescannte IP
+            // Update the currently scanned IP
             currentIpCallback(targetIp);
             
             try {
-                // Debug-Info: Zeige an, welche IP gerade geprüft wird
-                console.log(`Prüfe IP: ${targetIp}`);
+                // Debug info: Show which IP is being checked
+                console.log(`Checking IP: ${targetIp}`);
                 
-                // Versuche, die AWTRIX-API zu erreichen
+                // Try to reach the AWTRIX API
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 1000); // 1000ms Timeout
+                const timeoutId = setTimeout(() => controller.abort(), 1000); // 1000ms timeout
+
+                // Link the local controller with the parent AbortController
+                abortController.signal.addEventListener('abort', () => controller.abort());
 
                 const response = await fetch(`http://${targetIp}/api/stats`, {
                     method: 'GET',
@@ -55,39 +69,39 @@ async function scanWithProgress(ips, progressCallback, currentIpCallback, device
 
                 clearTimeout(timeoutId);
 
-                // Debug-Info: Zeige den Status der Antwort an
-                console.log(`Antwort von ${targetIp}: Status ${response.status}, OK: ${response.ok}`);
+                // Debug info: Show the response status
+                console.log(`Response from ${targetIp}: Status ${response.status}, OK: ${response.ok}`);
                 
                 if (response.ok) {
-                    // Versuche, die Antwort als JSON zu parsen
+                    // Try to parse the response as JSON
                     try {
                         const data = await response.json();
                         
-                        // Debug-Info: Zeige die Antwortdaten an
-                        console.log(`Antwortdaten von ${targetIp}:`, data);
+                        // Debug info: Show the response data
+                        console.log(`Response data from ${targetIp}:`, data);
                         
-                        // Überprüfe, ob es sich um ein AWTRIX-Gerät handelt
-                        // AWTRIX-Geräte haben typischerweise bestimmte Eigenschaften in der Antwort
+                        // Check if it's an AWTRIX device
+                        // AWTRIX devices typically have certain properties in the response
                         if (data && (data.AWTRIX !== undefined || data.version !== undefined || data.matrixType !== undefined)) {
-                            // Debug-Info: Zeige an, dass ein Gerät gefunden wurde
-                            console.log(`AWTRIX-Gerät gefunden: ${targetIp}`);
+                            // Debug info: Show that a device was found
+                            console.log(`AWTRIX device found: ${targetIp}`);
                             allDevices.push(targetIp);
-                            // Benachrichtige über gefundenes Gerät
+                            // Notify about found device
                             deviceFoundCallback(targetIp);
                         } else {
-                            console.log(`Kein AWTRIX-Gerät unter ${targetIp} (ungültige Antwortdaten)`);
+                            console.log(`No AWTRIX device under ${targetIp} (invalid response data)`);
                         }
                     } catch (jsonError) {
-                        console.log(`Fehler beim Parsen der JSON-Antwort von ${targetIp}: ${jsonError.message}`);
+                        console.log(`Error parsing JSON response from ${targetIp}: ${jsonError.message}`);
                     }
                 }
             } catch (error) {
-                // Debug-Info: Zeige den Fehler an
-                console.log(`Fehler bei ${targetIp}: ${error.name} - ${error.message}`);
-                // Ignoriere Fehler - kein AWTRIX-Gerät unter dieser IP
+                // Debug info: Show the error
+                console.log(`Error at ${targetIp}: ${error.name} - ${error.message}`);
+                // Ignore errors - no AWTRIX device under this IP
             }
             
-            // Aktualisiere den Fortschritt
+            // Update progress
             scannedIps++;
             const progress = Math.floor((scannedIps / totalIps) * 100);
             progressCallback(progress);
@@ -103,25 +117,49 @@ async function scanWithProgress(ips, progressCallback, currentIpCallback, device
  */
 async function searchForDevices(event) {
     try {
-        // Disable the button during search
+        // Get the search button
         const searchButton = document.getElementById('searchDevicesBtn');
-        if (searchButton) {
-            searchButton.disabled = true;
-            searchButton.textContent = 'Suche... 0%';
+        
+        // If a search is already in progress, cancel it
+        if (searchInProgress && searchAbortController) {
+            searchAbortController.abort();
+            searchInProgress = false;
+            
+            // Re-enable the button and reset text
+            if (searchButton) {
+                searchButton.disabled = false;
+                searchButton.textContent = 'Search for Devices';
+            }
+            
+            // Hide the scan status
+            const scanStatus = document.getElementById('scanStatus');
+            if (scanStatus) {
+                scanStatus.style.display = 'none';
+            }
+            
+            console.log("Search cancelled by user");
+            return;
         }
         
-        // Zeige den Scan-Status an
+        // Set search in progress flag
+        searchInProgress = true;
+        
+        // Create a new AbortController for this search
+        searchAbortController = new AbortController();
+        
+        // Update button during search
+        if (searchButton) {
+            searchButton.disabled = false; // Keep enabled so it can be clicked to cancel
+            searchButton.textContent = 'Cancel Search (0%)';
+        }
+        
+        // Show scan status
         const scanStatus = document.getElementById('scanStatus');
         if (scanStatus) {
             scanStatus.style.display = 'block';
-            // Wir müssen nur den Inhalt des ticker-content-Elements aktualisieren
-            const tickerContent = scanStatus.querySelector('.ticker-content');
-            if (tickerContent) {
-                tickerContent.innerHTML = '<span style="color: #ff5252;">S</span><span style="color: #ffb142;">c</span><span style="color: #ffeb3b;">a</span><span style="color: #66bb6a;">n</span><span style="color: #29b6f6;">n</span><span style="color: #7e57c2;">i</span><span style="color: #ec407a;">n</span><span style="color: #42a5f5;">g</span>: <span id="currentIp">-</span>';
-            }
         }
         
-        // Verstecke den Terminal-Output, da wir ihn nicht mehr benötigen
+        // Hide terminal output
         const terminalOutput = document.getElementById('terminalOutput');
         if (terminalOutput) {
             terminalOutput.style.display = 'none';
@@ -130,14 +168,14 @@ async function searchForDevices(event) {
         // Get the global settings to access the IP addresses
         const globalSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
 
-        // Definiere die Callback-Funktion für Fortschrittsupdates
+        // Progress update callback
         const updateProgress = (progress) => {
             if (searchButton) {
-                searchButton.textContent = `Suche... ${progress}%`;
+                searchButton.textContent = `Cancel Search (${progress}%)`;
             }
         };
         
-        // Definiere die Callback-Funktion für Updates der aktuell gescannten IP
+        // Current IP update callback
         const updateCurrentIp = (ip) => {
             const currentIpElement = document.getElementById('currentIp');
             if (currentIpElement) {
@@ -145,33 +183,33 @@ async function searchForDevices(event) {
             }
         };
         
-        // Zähler für gefundene Geräte
+        // Counter for found devices
         let deviceCount = 0;
         
-        // Definiere die Callback-Funktion für gefundene Geräte
+        // Device found callback
         const deviceFound = (ip) => {
-            // Zähle die gefundenen Geräte
+            // Count found devices
             deviceCount++;
             
-            // Aktualisiere den Scan-Status mit der gefundenen IP
+            // Update scan status with found IP
             const scanStatus = document.getElementById('scanStatus');
             if (scanStatus) {
-                // Füge das neueste Gerät hinzu
+                // Add the new device
                 const deviceEntry = document.createElement('div');
                 deviceEntry.className = 'found-device';
                 deviceEntry.textContent = ip;
                 scanStatus.appendChild(deviceEntry);
             }
             
-            // Aktualisiere das Device-Dropdown
+            // Update device dropdown
             updateDeviceDropdown(ip);
         };
         
-        // Funktion zum Aktualisieren des Device-Dropdowns
+        // Function to update device dropdown
         const updateDeviceDropdown = (ip) => {
             const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
             if (deviceSelect) {
-                // Prüfe, ob die IP bereits als Option existiert
+                // Check if IP already exists as option
                 let optionExists = false;
                 for (const option of deviceSelect.children) {
                     if (option.value === ip) {
@@ -180,7 +218,7 @@ async function searchForDevices(event) {
                     }
                 }
                 
-                // Füge die IP als Option hinzu, wenn sie noch nicht existiert
+                // Add IP as option if it doesn't exist
                 if (!optionExists) {
                     const option = document.createElement('option');
                     option.value = ip;
@@ -188,19 +226,23 @@ async function searchForDevices(event) {
                     deviceSelect.appendChild(option);
                 }
                 
-                // Wähle die IP aus
+                // Select the IP
                 deviceSelect.value = ip;
                 deviceSelect.dispatchEvent(new Event('change'));
             }
         };
 
-        // Verwende die Wrapper-Funktion, um den Fortschritt anzuzeigen
+        // Use the wrapper function to show progress
         const foundDevices = await scanWithProgress(
             globalSettings.ipAddresses, 
             updateProgress, 
             updateCurrentIp, 
-            deviceFound
+            deviceFound,
+            searchAbortController
         );
+        
+        // Reset search in progress flag
+        searchInProgress = false;
         
         console.log("Found AWTRIX devices:", foundDevices);
 
@@ -210,50 +252,55 @@ async function searchForDevices(event) {
             searchButton.textContent = 'Search for Devices';
         }
 
-        // Entferne den Scan-Status
+        // Hide scan status
         if (scanStatus) {
             scanStatus.style.display = 'none';
         }
 
-        // Wenn keine Geräte gefunden wurden, zeige nur einen Alert an und beende die Funktion
-        if (foundDevices.length === 0) {
-            alert("Keine AWTRIX-Geräte gefunden.");
+        // If search was aborted, end function here
+        if (searchAbortController.signal.aborted) {
             return;
         }
 
-        // Zeige einen Confirm-Dialog mit den Ergebnissen
-        const confirmMessage = `${foundDevices.length} AWTRIX-Gerät(e) gefunden. Möchten Sie diese Geräte übernehmen?`;
+        // If no devices found, show alert and end function
+        if (foundDevices.length === 0) {
+            alert("No AWTRIX devices found.");
+            return;
+        }
+
+        // Show confirm dialog with results
+        const confirmMessage = `${foundDevices.length} AWTRIX device(s) found. Do you want to save these devices?`;
         const shouldSaveDevices = confirm(confirmMessage);
         
-        // Wenn der Benutzer den Dialog bestätigt, speichere die Geräte
+        // If user confirms, save devices
         if (shouldSaveDevices) {
             try {
-                // Hole aktuelle globalSettings, um andere Einstellungen nicht zu überschreiben
+                // Get current global settings to avoid overwriting other settings
                 const currentSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
                 
-                // Aktualisiere die devices-Eigenschaft
+                // Update devices property
                 const updatedSettings = {
                     ...currentSettings,
                     devices: foundDevices
                 };
                 
-                // Speichere die aktualisierten Einstellungen
+                // Save updated settings
                 await SDPIComponents.streamDeckClient.setGlobalSettings(updatedSettings);
                 console.log("Devices saved to globalSettings:", foundDevices);
                 
-                // Aktualisiere die Device-Liste im Formular mit allen gefundenen Geräten
+                // Update device list in form with all found devices
                 const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
                 if (deviceSelect && foundDevices.length > 0) {
-                    // Leere die aktuelle Liste, behalte aber die erste Option (falls vorhanden)
+                    // Clear current list, but keep the first option (if any)
                     while (deviceSelect.children.length > 1) {
                         deviceSelect.removeChild(deviceSelect.lastChild);
                     }
                     
-                    // Füge alle gefundenen Geräte hinzu
+                    // Add all found devices
                     foundDevices.forEach(ip => {
                         let optionExists = false;
                         
-                        // Prüfe, ob die IP bereits als Option existiert
+                        // Check if IP already exists as option
                         for (const option of deviceSelect.children) {
                             if (option.value === ip) {
                                 optionExists = true;
@@ -261,7 +308,7 @@ async function searchForDevices(event) {
                             }
                         }
                         
-                        // Füge die IP als Option hinzu, wenn sie noch nicht existiert
+                        // Add IP as option if it doesn't exist
                         if (!optionExists) {
                             const option = document.createElement('option');
                             option.value = ip;
@@ -270,7 +317,7 @@ async function searchForDevices(event) {
                         }
                     });
                     
-                    // Wähle das erste gefundene Gerät aus, wenn noch keines ausgewählt ist
+                    // Select the first found device if none is selected
                     if (!deviceSelect.value && foundDevices.length > 0) {
                         deviceSelect.value = foundDevices[0];
                         deviceSelect.dispatchEvent(new Event('change'));
@@ -278,14 +325,14 @@ async function searchForDevices(event) {
                 }
             } catch (error) {
                 console.error("Error saving devices to globalSettings:", error);
-                alert("Fehler beim Speichern der Geräte: " + error.message);
+                alert("Error saving devices: " + error.message);
             }
         } else {
             console.log("User cancelled saving devices");
         }
     } catch (error) {
         console.error("Error searching for devices:", error);
-        alert("Fehler bei der Gerätesuche: " + error.message);
+        alert("Error searching for devices: " + error.message);
         
         // Re-enable the button
         const searchButton = document.getElementById('searchDevicesBtn');
@@ -294,10 +341,10 @@ async function searchForDevices(event) {
             searchButton.textContent = 'Search for Devices';
         }
         
-        // Aktualisiere den Scan-Status mit der Fehlermeldung und entferne ihn nach 3 Sekunden
+        // Update scan status with error message and hide it after 3 seconds
         const scanStatus = document.getElementById('scanStatus');
         if (scanStatus) {
-            scanStatus.innerHTML = `<div class="found-device" style="color: #ff5555;">Fehler: ${error.message}</div>`;
+            scanStatus.innerHTML = `<div class="found-device" style="color: #ff5555;">Error: ${error.message}</div>`;
             setTimeout(() => {
                 scanStatus.style.display = 'none';
             }, 3000);
