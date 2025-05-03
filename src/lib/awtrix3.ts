@@ -215,8 +215,8 @@ export class Awtrix3 {
     try {
       const stats = await this.getStats();
       // Stellen wir sicher, dass wir eine gültige Zahl haben
-      if (stats && typeof stats.wifi === 'number') {
-        return stats.wifi;
+      if (stats && typeof stats.wifi_signal === 'number') {
+        return stats.wifi_signal;
       }
       // Fallback, wenn der Wert nicht vorhanden ist
       return 0;

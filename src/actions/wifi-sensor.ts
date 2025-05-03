@@ -68,7 +68,7 @@ export class WifiSensor extends SingletonAction<WifiSensorSettings> {
       const wifi = await awtrix.getWifi();
       
       // WLAN-Signal auf dem Key anzeigen mit drei Leerzeilen für mehr Abstand
-      await action.setTitle(`\n\n\n${wifi}%`, { target: 0, state: 0 });
+      await action.setTitle(`\n\n\n${wifi} dBm`, { target: 0, state: 0 });
       streamDeck.logger.info(`Updated wifi for device ${device}: ${wifi}%`);
     } catch (error) {
       streamDeck.logger.error(`Error updating wifi for device ${device}: ${error}`);
