@@ -3,36 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <title>Power Control Settings</title>
-    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
     <script src="../lib/awtrix-devices.js"></script>
     <script src="../lib/awtrix3.js"></script>
-    <script src="power-control.js"></script>
-    <style>
-        .scan-status {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #2d2d2d;
-            color: #ddd;
-            display: none;
-        }
-        .terminal-output {
-            margin-top: 5px;
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #2d2d2d;
-            color: #ddd;
-            max-height: 150px;
-            overflow-y: auto;
-            display: none;
-        }
-        .found-device {
-            margin: 3px 0;
-        }
-        .found-device::before {
-            content: "• ";
-        }
-    </style>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
 </head>
 <body>
     <sdpi-item label="Action">
@@ -43,6 +18,7 @@
         </sdpi-select>
     </sdpi-item>
     
+    <!-- Device Select -->
     <sdpi-item label="Device">
         <sdpi-select setting="device">
             <option>No device seleted...</option>
@@ -60,5 +36,6 @@
             <!-- Hier werden gefundene Geräte sofort angezeigt -->
         </div>
     </sdpi-item>
+    <!-- End of Device Select -->
 </body>
 </html>

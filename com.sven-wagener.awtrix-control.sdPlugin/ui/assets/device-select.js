@@ -1,15 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
     (async function () {
-        // Initialize awtrixDevices with the streamDeckClient
-        awtrixDevices.initialize(SDPIComponents.streamDeckClient);
-        
-        const globalSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
-        console.log("Global Settings in power control", globalSettings);
-        
-        // Populate device select with saved devices
-        const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
-        if (deviceSelect) {
-            await awtrixDevices.populateDeviceSelect(deviceSelect);
+        try {
+            console.log("Initializing awtrixDevices...");
+            
+            // Ensure SDPIComponents is available
+            if (!SDPIComponents || !SDPIComponents.streamDeckClient) {
+                console.error("SDPIComponents or streamDeckClient not available");
+                alert("Error: Stream Deck SDK not properly initialized. Please restart Stream Deck.");
+                return;
+            }
+            
+            // Initialize awtrixDevices with the streamDeckClient
+            awtrixDevices.initialize(SDPIComponents.streamDeckClient);
+            
+            // Get global settings
+            let globalSettings;
+            try {
+                globalSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
+                console.log("Global Settings in power control", globalSettings);
+            } catch (error) {
+                console.error("Error getting global settings:", error);
+                globalSettings = {};
+            }
+            
+            // Populate device select with saved devices
+            const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+            if (deviceSelect) {
+                await awtrixDevices.populateDeviceSelect(deviceSelect);
+            }
+        } catch (error) {
+            console.error("Error in DOMContentLoaded:", error);
         }
     })();
 });
@@ -36,7 +56,6 @@ async function searchForDevices(event) {
             }
             
             // Hide the scan status
-            const scanStatus = document.getElementById('scanStatus');
             if (scanStatus) {
                 scanStatus.style.display = 'none';
             }
@@ -52,7 +71,6 @@ async function searchForDevices(event) {
         }
         
         // Show scan status
-        const scanStatus = document.getElementById('scanStatus');
         if (scanStatus) {
             scanStatus.style.display = 'block';
             
@@ -62,22 +80,31 @@ async function searchForDevices(event) {
         }
         
         // Hide terminal output
-        const terminalOutput = document.getElementById('terminalOutput');
         if (terminalOutput) {
             terminalOutput.style.display = 'none';
         }
 
         // Get the global settings to access the IP addresses
-        const globalSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
+        let globalSettings;
+        try {
+            globalSettings = await SDPIComponents.streamDeckClient.getGlobalSettings();
+            console.log("Global Settings for search:", globalSettings);
+        } catch (error) {
+            console.error("Error getting global settings:", error);
+            globalSettings = { ipAddresses: [] };
+        }
 
         // Display IP ranges that will be scanned
-        const ipRangesElement = document.getElementById('ipRanges');
-        if (ipRangesElement && globalSettings.ipAddresses && globalSettings.ipAddresses.length > 0) {
-            const subnets = globalSettings.ipAddresses.map(ip => {
-                const parts = ip.split('.');
-                return parts.length === 4 ? `${parts[0]}.${parts[1]}.${parts[2]}.*` : ip;
-            });
-            ipRangesElement.textContent = `IP range: ${subnets.join(', ')}`;
+        if (ipRangesElement) {
+            if (globalSettings.ipAddresses && globalSettings.ipAddresses.length > 0) {
+                const subnets = globalSettings.ipAddresses.map(ip => {
+                    const parts = ip.split('.');
+                    return parts.length === 4 ? `${parts[0]}.${parts[1]}.${parts[2]}.*` : ip;
+                });
+                ipRangesElement.textContent = `IP range: ${subnets.join(', ')}`;
+            } else {
+                ipRangesElement.textContent = "IP range: Using default networks (192.168.1.*, 192.168.0.*, 10.0.0.*)";
+            }
             ipRangesElement.style.marginBottom = '8px';
         }
 
@@ -105,7 +132,6 @@ async function searchForDevices(event) {
             deviceCount++;
             
             // Update scan status with found IP
-            const scanStatus = document.getElementById('scanStatus');
             if (scanStatus) {
                 // Add the new device
                 const deviceEntry = document.createElement('div');
@@ -141,11 +167,13 @@ async function searchForDevices(event) {
         };
 
         // Start the scan with our callbacks
+        console.log("Starting device scan...");
         const result = await awtrixDevices.startScan({
             progressCallback: updateProgress,
             currentIpCallback: updateCurrentIp,
             deviceFoundCallback: deviceFound
         });
+        console.log("Scan result:", result);
         
         // Re-enable the button
         if (searchButton) {
@@ -201,7 +229,7 @@ async function searchForDevices(event) {
             console.log("User cancelled saving devices");
         }
     } catch (error) {
-        console.error("Error searching for devices:", error);
+        console.error("Error in searchForDevices:", error);
         alert("Error searching for devices: " + error.message);
         
         // Re-enable the button
@@ -209,6 +237,12 @@ async function searchForDevices(event) {
         if (searchButton) {
             searchButton.disabled = false;
             searchButton.textContent = 'Search for Devices';
+        }
+        
+        // Hide scan status
+        const scanStatus = document.getElementById('scanStatus');
+        if (scanStatus) {
+            scanStatus.style.display = 'none';
         }
     }
 }

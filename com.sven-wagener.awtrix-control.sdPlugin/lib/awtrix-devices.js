@@ -112,10 +112,20 @@ class AwtrixDevices {
     async getIpRangesToScan() {
         try {
             const globalSettings = await this.streamDeckClient.getGlobalSettings();
+            console.log("Global settings for IP ranges:", globalSettings);
+            
+            // Fallback: If no IP addresses are configured, use the local network interfaces
+            if (!globalSettings.ipAddresses || globalSettings.ipAddresses.length === 0) {
+                console.log("No IP addresses configured, using fallback");
+                // Return a default IP range as fallback (common home network)
+                return ["192.168.1.1", "192.168.0.1", "10.0.0.1"];
+            }
+            
             return globalSettings.ipAddresses || [];
         } catch (error) {
             console.error("Error getting IP ranges from global settings:", error);
-            return [];
+            // Return a default IP range as fallback
+            return ["192.168.1.1", "192.168.0.1", "10.0.0.1"];
         }
     }
 
