@@ -214,6 +214,22 @@
 					"TitleAlignment": "bottom"
 				}
 			]
+		},
+		{
+			"Name": "Transition Control",
+			"UUID": "com.sven-wagener.awtrix-control.transition-control",
+			"Icon": "imgs/actions/awtrix-transition/icon",
+			"Tooltip": "Pause or resume transitions on your Awtrix device",
+			"PropertyInspectorPath": "ui/transition-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-transition/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",

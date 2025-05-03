@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Transition Play Key</title>
+    <g id="Transition-Play-Key" stroke="#FFFFFF" stroke-width="2" fill="none" fill-rule="evenodd" transform="translate(0, -6)">
+        <!-- Äußerer Kreis -->
+        <circle cx="36" cy="42" r="24" />
+        <!-- Play-Symbol -->
+        <path d="M27 30L27 54L48 42L27 30Z" />
+    </g>
+</svg>

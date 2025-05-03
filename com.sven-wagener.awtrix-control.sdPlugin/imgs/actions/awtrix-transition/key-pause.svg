@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Transition Pause Key</title>
+    <g id="Transition-Pause-Key" stroke="#FFFFFF" stroke-width="2" fill="none" fill-rule="evenodd" transform="translate(0, -6)">
+        <!-- Äußerer Kreis -->
+        <circle cx="36" cy="42" r="24" />
+        <!-- Pause-Symbol -->
+        <path d="M26 30L26 54" />
+        <path d="M46 30L46 54" />
+    </g>
+</svg>
