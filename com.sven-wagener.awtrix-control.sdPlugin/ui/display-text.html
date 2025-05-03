@@ -3,7 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <title>Display Text Settings</title>
-    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+    <script src="../lib/awtrix-devices.js"></script>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
 </head>
 <body>
 
@@ -19,17 +22,24 @@
         <sdpi-textfield setting="duration" value="10" min="1" max="600" required></sdpi-textfield>
     </sdpi-item>
 
+    <!-- Device Select -->
     <sdpi-item label="Device">
         <sdpi-select setting="device">
+            <option>No device seleted...</option>
             <!-- Additional options will be populated dynamically -->
         </sdpi-select>
     </sdpi-item>
-
-    <sdpi-item >
-        <sdpi-button onclick="openGeneralSettings(event)">Configure Devices...</sdpi-button>
+    
+    <sdpi-item>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">
+            <div id="ipRanges"></div>
+            Scanning: <span id="currentIp">-</span>
+        </div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Hier werden gefundene Geräte sofort angezeigt -->
+        </div>
     </sdpi-item>
-
-    <script src="js/awtrix3.js"></script>
-    <script src="js/ui/display-text.js"></script>
+    <!-- End of Device Select -->
 </body>
 </html>
