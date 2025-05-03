@@ -4,7 +4,7 @@ import { Awtrix3 } from "../lib/awtrix3";
 
 interface DialAction {
   setFeedback: (feedback: {
-    value: number,
+    value: string,
     indicator: {
       value: number;
     };
@@ -50,7 +50,7 @@ export class BrightnessControl extends SingletonAction<BrightnessControlSettings
       if ('setFeedback' in ev.action) {
         const dialAction = ev.action as unknown as DialAction;
         await dialAction.setFeedback({
-          value: brightnessPercentage,
+          value: brightnessPercentage + "%",
           indicator: {
             value: brightnessPercentage
           }
@@ -111,7 +111,7 @@ export class BrightnessControl extends SingletonAction<BrightnessControlSettings
         if ('setFeedback' in ev.action) {
           const dialAction = ev.action as unknown as DialAction;
           await dialAction.setFeedback({
-            value: brightnessPercentage,
+            value: brightnessPercentage + "%",
             indicator: {
               value: brightnessPercentage
             }
@@ -161,7 +161,7 @@ export class BrightnessControl extends SingletonAction<BrightnessControlSettings
       if ('setFeedback' in ev.action) {
         const dialAction = ev.action as unknown as DialAction;
         await dialAction.setFeedback({
-          value: brightnessPercentage,
+          value: brightnessPercentage + "%",
           indicator: {
             value: brightnessPercentage
           }
