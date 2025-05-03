@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>AWTRIX App Switch Control</title>
+  <script src="../lib/awtrix-devices.js"></script>
+  <script src="../lib/sdpi-components.js"></script>
+  <script src="assets/device-select.js"></script>
+  <link rel="stylesheet" href="assets/device-select.css">
+  <style>
+    .app-list-container {
+      margin-top: 10px;
+    }
+    .loading-apps {
+      font-style: italic;
+      color: #666;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Device Select -->
+  <sdpi-item label="Device">
+    <sdpi-select setting="device" id="deviceSelect" onchange="onDeviceChange(event)">
+      <option>No device selected...</option>
+      <!-- Additional options will be populated dynamically -->
+    </sdpi-select>
+  </sdpi-item>
+  
+  <sdpi-item>
+    <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+    <div id="scanStatus" class="scan-status">
+      <div id="ipRanges"></div>
+      Scanning: <span id="currentIp">-</span>
+    </div>
+    <div id="terminalOutput" class="terminal-output">
+      <!-- Hier werden gefundene Geräte sofort angezeigt -->
+    </div>
+  </sdpi-item>
+  <!-- End of Device Select -->
+  
+  <!-- App Select -->
+  <sdpi-item label="App">
+    <sdpi-select setting="appName" id="appSelect">
+      <option value="">Select an app...</option>
+      <!-- Options will be populated dynamically -->
+    </sdpi-select>
+    <div id="loadingApps" class="loading-apps">Loading apps...</div>
+  </sdpi-item>
+  
+  <sdpi-item>
+    <sdpi-button id="refreshAppsBtn" onclick="refreshApps()">Refresh Apps List</sdpi-button>
+  </sdpi-item>
+  <!-- End of App Select -->
+
+  <script>
+    // Globale Variablen
+    let $SD;
+    let actionInfo = {};
+    let uuid = "";
+    
+    // Initialisierung
+    document.addEventListener('DOMContentLoaded', function() {
+      (async function () {  
+        const payload = { event: 'getApps' };
+        await SDPIComponents.streamDeckClient.send('sendToPlugin', payload);
+      })();
+
+      // Parameter aus der URL extrahieren
+      const urlParams = new URLSearchParams(window.location.search);
+      uuid = urlParams.get('uuid');
+      const actionInfoParam = urlParams.get('actionInfo');
+      
+      if (actionInfoParam) {
+        actionInfo = JSON.parse(actionInfoParam);
+      }
+      
+      // Auf Nachrichten vom Plugin hören
+      if (window.$SD) {
+        $SD = window.$SD;
+        
+        // Auf Änderungen der Einstellungen hören
+        $SD.on('didReceiveSettings', function(jsn) {
+          const settings = jsn.payload.settings;
+          
+          // Wenn Apps in den Einstellungen vorhanden sind, diese anzeigen
+          if (settings.availableApps) {
+            populateApps(settings.availableApps);
+          }
+        });
+      }
+    });
+    
+    // Funktion zum Aktualisieren der Apps-Liste
+    function refreshApps() {
+      const deviceSelect = document.getElementById('deviceSelect');
+      const device = deviceSelect.value;x
+      
+      if (!device || device === "No device selected...") {
+        alert("Please select a device first");
+        return;
+      }
+      
+      // Loading-Anzeige einblenden
+      document.getElementById('loadingApps').style.display = 'block';
+      
+      // Nach Apps fragen
+      if ($SD) {
+        $SD.api.sendToPlugin(uuid, {
+          event: 'getApps'
+        });
+      }
+    }
+    
+    // Funktion zum Befüllen des App-Select-Felds
+    function populateApps(apps) {
+      const appSelect = document.getElementById('appSelect');
+      
+      // Bestehende Optionen entfernen (außer der ersten)
+      while (appSelect.options.length > 1) {
+        appSelect.remove(1);
+      }
+      
+      // Neue Optionen hinzufügen
+      if (apps && apps.length > 0) {
+        apps.forEach(app => {
+          const option = document.createElement('option');
+          option.value = app.name;
+          option.text = app.name;
+          appSelect.appendChild(option);
+        });
+      } else {
+        const option = document.createElement('option');
+        option.value = "";
+        option.text = "No apps found";
+        appSelect.appendChild(option);
+      }
+      
+      // Loading-Anzeige ausblenden
+      document.getElementById('loadingApps').style.display = 'none';
+    }
+    
+    // Funktion, die aufgerufen wird, wenn sich das ausgewählte Gerät ändert
+    function onDeviceChange(event) {
+      // Nach Apps fragen, wenn ein Gerät ausgewählt wurde
+      const device = event.target.value;
+      if (device && device !== "No device selected...") {
+        setTimeout(function() {
+          refreshApps();
+        }, 500);
+      }
+    }
+  </script>
+</body>
+</html>

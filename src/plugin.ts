@@ -9,6 +9,7 @@ import { WifiSensor } from "./actions/wifi-sensor";
 import { NextAppControl } from "./actions/nextapp-control";
 import { PreviousAppControl } from "./actions/previousapp-control";
 import { NotifyDismissControl } from "./actions/notify-dismiss-control";
+import { AppSwitchControl } from "./actions/app-switch-control";
 import getIpAddresses from "./lib/ip"; 
  
 // We can enable "trace" logging so that all messages between the Stream Deck, and the plugin are recorded. When storing sensitive information 
@@ -35,5 +36,6 @@ streamDeck.actions.registerAction(new WifiSensor());
 streamDeck.actions.registerAction(new NextAppControl());
 streamDeck.actions.registerAction(new PreviousAppControl());
 streamDeck.actions.registerAction(new NotifyDismissControl());
+streamDeck.actions.registerAction(new AppSwitchControl());
  
 streamDeck.connect();

@@ -146,6 +146,22 @@
 					"TitleAlignment": "middle"
 				}
 			]
+		},
+		{
+			"Name": "App Switch",
+			"UUID": "com.sven-wagener.awtrix-control.app-switch",
+			"Icon": "imgs/actions/awtrix-app-switch/icon",
+			"Tooltip": "Switch to a specific app on your Awtrix device",
+			"PropertyInspectorPath": "ui/app-switch-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-app-switch/key",
+					"TitleAlignment": "middle"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",
