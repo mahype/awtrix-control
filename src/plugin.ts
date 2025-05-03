@@ -32,5 +32,8 @@ streamDeck.actions.registerAction(new HumiditySensor());
 streamDeck.actions.registerAction(new LuxSensor());
 streamDeck.actions.registerAction(new BatterySensor());
 streamDeck.actions.registerAction(new WifiSensor());
+streamDeck.actions.registerAction(new NextAppControl());
+streamDeck.actions.registerAction(new PreviousAppControl());
+streamDeck.actions.registerAction(new NotifyDismissControl());
  
 streamDeck.connect();
