@@ -182,6 +182,22 @@
 					"TitleAlignment": "bottom"
 				}
 			]
+		},
+		{
+			"Name": "LiveView",
+			"UUID": "com.sven-wagener.awtrix-control.liveview",
+			"Icon": "imgs/actions/awtrix-liveview/icon",
+			"Tooltip": "Open the LiveView of your Awtrix device",
+			"PropertyInspectorPath": "ui/liveview-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-liveview/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",

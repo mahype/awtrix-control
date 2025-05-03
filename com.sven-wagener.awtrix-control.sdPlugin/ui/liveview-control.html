@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>LiveView Control</title>
+    <script src="../lib/awtrix-devices.js"></script>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
+</head>
+<body>
+    <sdpi-item label="Ansichtsmodus">
+        <sdpi-radio setting="viewMode" value="normal">
+            <option value="normal">Normal</option>
+            <option value="fullscreen">Fullscreen</option>
+        </sdpi-radio>
+    </sdpi-item>
+    
+    <!-- Device Select -->
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <option>Please select...</option>
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+    
+    <sdpi-item>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">
+            <div id="ipRanges"></div>
+            Scanning: <span id="currentIp">-</span>
+        </div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Devices found will be displayed here -->
+        </div>
+    </sdpi-item>
+    <!-- End of Device Select -->
+</body>
+</html>
