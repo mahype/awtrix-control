@@ -230,6 +230,22 @@
 					"TitleAlignment": "bottom"
 				}
 			]
+		},
+		{
+			"Name": "Custom App",
+			"UUID": "com.sven-wagener.awtrix-control.custom-app",
+			"Icon": "imgs/actions/awtrix-custom-app/icon",
+			"Tooltip": "Create and send custom apps to your Awtrix device",
+			"PropertyInspectorPath": "ui/custom-app-control.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/awtrix-custom-app/key",
+					"TitleAlignment": "bottom"
+				}
+			]
 		}
 	],
 	"Category": "Awtrix",

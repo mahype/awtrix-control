@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Custom App Icon</title>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- 8x8 Grid Background -->
+        <rect fill="#1E1E1E" x="2" y="2" width="16" height="16" rx="1"></rect>
+        <!-- Grid Lines -->
+        <path d="M4,2 L4,18 M6,2 L6,18 M8,2 L8,18 M10,2 L10,18 M12,2 L12,18 M14,2 L14,18 M16,2 L16,18" stroke="#444444" stroke-width="0.5"></path>
+        <path d="M2,4 L18,4 M2,6 L18,6 M2,8 L18,8 M2,10 L18,10 M2,12 L18,12 M2,14 L18,14 M2,16 L18,16" stroke="#444444" stroke-width="0.5"></path>
+        <!-- Pixels -->
+        <rect fill="#FF5555" x="4" y="4" width="2" height="2"></rect>
+        <rect fill="#55FF55" x="6" y="4" width="2" height="2"></rect>
+        <rect fill="#5555FF" x="8" y="4" width="2" height="2"></rect>
+        <rect fill="#FFFF55" x="10" y="4" width="2" height="2"></rect>
+        <rect fill="#FF55FF" x="12" y="4" width="2" height="2"></rect>
+        <rect fill="#55FFFF" x="14" y="4" width="2" height="2"></rect>
+        <!-- Text Representation -->
+        <rect fill="#FFFFFF" x="4" y="8" width="12" height="2"></rect>
+        <rect fill="#FFFFFF" x="4" y="12" width="8" height="2"></rect>
+        <rect fill="#FFFFFF" x="4" y="14" width="4" height="2"></rect>
+    </g>
+</svg>

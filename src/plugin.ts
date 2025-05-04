@@ -15,6 +15,7 @@ import { SettingsControl } from "./actions/settings-control";
 import { TransitionControl } from "./actions/transition-control";
 import getIpAddresses from "./lib/ip"; 
 import { BrightnessControl } from "./actions/brightness-control";
+import { CustomAppControl } from "./actions/custom-app-control";
  
 // We can enable "trace" logging so that all messages between the Stream Deck, and the plugin are recorded. When storing sensitive information 
 streamDeck.logger.setLevel(LogLevel.TRACE); 
@@ -45,5 +46,6 @@ streamDeck.actions.registerAction(new BrightnessControl());
 streamDeck.actions.registerAction(new LiveViewControl());
 streamDeck.actions.registerAction(new SettingsControl());
 streamDeck.actions.registerAction(new TransitionControl());
+streamDeck.actions.registerAction(new CustomAppControl());
  
 streamDeck.connect();

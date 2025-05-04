@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="144px" height="144px" viewBox="0 0 144 144" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Custom App Key</title>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- 8x8 Grid Background with more padding -->
+        <rect fill="#1E1E1E" x="32" y="32" width="80" height="80" rx="4"></rect>
+        <!-- Grid Lines -->
+        <path d="M42,32 L42,112 M52,32 L52,112 M62,32 L62,112 M72,32 L72,112 M82,32 L82,112 M92,32 L92,112 M102,32 L102,112" stroke="#444444" stroke-width="1"></path>
+        <path d="M32,42 L112,42 M32,52 L112,52 M32,62 L112,62 M32,72 L112,72 M32,82 L112,82 M32,92 L112,92 M32,102 L112,102" stroke="#444444" stroke-width="1"></path>
+        <!-- Pixels -->
+        <rect fill="#FF5555" x="42" y="42" width="10" height="10"></rect>
+        <rect fill="#55FF55" x="52" y="42" width="10" height="10"></rect>
+        <rect fill="#5555FF" x="62" y="42" width="10" height="10"></rect>
+        <rect fill="#FFFF55" x="72" y="42" width="10" height="10"></rect>
+        <rect fill="#FF55FF" x="82" y="42" width="10" height="10"></rect>
+        <rect fill="#55FFFF" x="92" y="42" width="10" height="10"></rect>
+        <!-- Text Representation -->
+        <rect fill="#FFFFFF" x="42" y="62" width="60" height="10"></rect>
+        <rect fill="#FFFFFF" x="42" y="82" width="40" height="10"></rect>
+        <rect fill="#FFFFFF" x="42" y="92" width="20" height="10"></rect>
+    </g>
+</svg>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Custom App Control Settings</title>
+    <script src="../lib/awtrix-devices.js"></script>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .file-preview {
+            display: none;
+            width: 64px;
+            height: 64px;
+            border: 1px solid #ccc;
+            image-rendering: pixelated;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .color-preview {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Name -->
+    <sdpi-item label="App Name">
+        <sdpi-textfield setting="appName" placeholder="Only letters and numbers" pattern="[a-zA-Z0-9]+" oninput="validateAppName(this)"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Text Input -->
+    <sdpi-item label="Text">
+        <sdpi-textfield setting="text" placeholder="Text to display"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Icon Upload -->
+    <!-- <sdpi-item label="Icon (8x8 JPG)">
+        <div class="file-upload">
+            <sdpi-file id="iconPicker" setting="iconFile" accept="image/jpeg"></sdpi-file>
+            <div id="iconPreview" class="file-preview"></div>
+        </div>
+    </sdpi-item> -->
+
+    <!-- Icon ID (Alternative to upload) -->
+    <sdpi-item label="Icon ID">
+        <sdpi-textfield setting="iconId" placeholder="Or enter icon ID number"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Icon ID Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Search for icons in the <a href="javascript:void(0)" style="color: #cc3333; text-decoration: none;" onclick="openLaMetricGallery(); return false;">LaMetric Icon Gallery</a> and add the icon number in the <a href="javascript:void(0)" id="awtrixSettingsLink" style="color: #cc3333; text-decoration: none;" onclick="openAwtrixSettings(); return false;">AWTRIX settings</a> under "Icons" before using it here.
+        </div>
+    </sdpi-item>
+
+    <!-- Stick Icon -->
+    <sdpi-item label="Stick Icon">
+        <sdpi-checkbox setting="stickIcon" label="Icon sticks to the left"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Text Color -->
+    <sdpi-item label="Text Color">
+        <sdpi-color setting="color" value="#FFFFFF"></sdpi-color>
+    </sdpi-item>
+
+    <!-- Background Color -->
+    <sdpi-item label="Background Color">
+        <sdpi-color setting="backgroundColor" value="#000000"></sdpi-color>
+    </sdpi-item>
+
+    <!-- Rainbow Text -->
+    <sdpi-item label="Rainbow Text">
+        <sdpi-checkbox setting="rainbow" label="Use rainbow colors for text"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Center Text -->
+    <sdpi-item label="Center Text">
+        <sdpi-checkbox setting="centerText" label="Center text on display"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Center Text Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Center Text only has an effect with short text that fits on the display.
+        </div>
+    </sdpi-item>
+
+    <!-- Fade Text -->
+    <sdpi-item label="Fade Text (ms)">
+        <sdpi-textfield setting="fadeText" value="0" placeholder="0 = no fading, e.g. 500 for 500ms"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Fade Text Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Fade Text does not work when Rainbow is activated.
+        </div>
+    </sdpi-item>
+
+    <!-- Blink Text -->
+    <sdpi-item label="Blink Text (ms)">
+        <sdpi-textfield setting="blinkText" value="0" placeholder="0 = no blinking, e.g. 500 for 500ms"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Blink Text Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Blink Text does not work when Rainbow is activated.
+        </div>
+    </sdpi-item>
+
+    <!-- Scroll Text -->
+    <sdpi-item label="Scroll Text">
+        <sdpi-checkbox setting="scroll" label="Scroll text if too long"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Repeat Count -->
+    <sdpi-item label="Repeat Count">
+        <sdpi-textfield setting="repeatCount" value="0" placeholder="-1 = infinite"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Duration -->
+    <sdpi-item label="Duration (ms)">
+        <sdpi-textfield setting="duration" value="5000" placeholder="Duration in milliseconds"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Save to Device -->
+    <sdpi-item label="Save to Device">
+        <sdpi-checkbox setting="saveToDevice" label="Save app to device flash"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Device Select -->
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <option>No device selected...</option>
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+    
+    <sdpi-item>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">
+            <div id="ipRanges"></div>
+            Scanning: <span id="currentIp">-</span>
+        </div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Hier werden gefundene Geräte sofort angezeigt -->
+        </div>
+    </sdpi-item>
+    <!-- End of Device Select -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Handle icon file upload
+            const iconPicker = document.getElementById('iconPicker');
+            const iconPreview = document.getElementById('iconPreview');
+            
+            if (iconPicker && iconPreview) {
+                iconPicker.addEventListener('change', function(event) {
+                    const filePath = event.target.value;
+                    if (filePath) {
+                        // Show loading state
+                        iconPreview.style.display = 'block';
+                        iconPreview.textContent = 'Loading...';
+                        
+                        // Read file as data URL
+                        const reader = new FileReader();
+                        
+                        // Get file from input
+                        const fileInput = iconPicker.querySelector('input[type="file"]');
+                        if (fileInput && fileInput.files && fileInput.files[0]) {
+                            const file = fileInput.files[0];
+                            
+                            // Check if file is a JPG
+                            if (!file.type.match('image/jpeg')) {
+                                alert('Please select a JPG image');
+                                iconPreview.style.display = 'none';
+                                return;
+                            }
+                            
+                            reader.onload = function(e) {
+                                // Show preview
+                                iconPreview.style.display = 'block';
+                                iconPreview.style.backgroundImage = `url(${e.target.result})`;
+                                iconPreview.textContent = '';
+                                
+                                // Create an image element to check dimensions
+                                const img = new Image();
+                                img.onload = function() {
+                                    if (img.width !== 8 || img.height !== 8) {
+                                        alert('Warning: Image should be 8x8 pixels for best results');
+                                    }
+                                    
+                                    // Convert to base64 and store in settings
+                                    const base64String = e.target.result.toString().split(',')[1];
+                                    SDPIComponents.streamDeckClient.setSettings({
+                                        icon: base64String,
+                                        iconId: '' // Clear icon ID when using custom icon
+                                    });
+                                };
+                                img.src = e.target.result.toString();
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    } else {
+                        // Hide preview if no file selected
+                        iconPreview.style.display = 'none';
+                    }
+                });
+            }
+
+            // Validate app name (only letters and numbers)
+            window.validateAppName = function(input) {
+                const value = input.value;
+                const pattern = /^[a-zA-Z0-9]*$/;
+                
+                if (!pattern.test(value)) {
+                    // Remove invalid characters
+                    input.value = value.replace(/[^a-zA-Z0-9]/g, '');
+                    
+                    // Show warning
+                    alert('App name can only contain letters and numbers');
+                }
+            };
+
+            // Function to open LaMetric Icon Gallery in a large window
+            window.openLaMetricGallery = function() {
+                try {
+                    const width = 1200;
+                    const height = 800;
+                    const left = (screen.width - width) / 2;
+                    const top = (screen.height - height) / 2;
+                    const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`;
+                    
+                    window.open('https://developer.lametric.com/icons', 'lametric_icons', features);
+                } catch (error) {
+                    console.error('Error opening LaMetric gallery:', error);
+                    // Fallback to standard link
+                    window.open('https://developer.lametric.com/icons', '_blank');
+                }
+            };
+
+            // Function to open AWTRIX settings
+            window.openAwtrixSettings = function() {
+                try {
+                    // Get the selected device from the device dropdown
+                    const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+                    if (deviceSelect && deviceSelect.value) {
+                        const width = 1200;
+                        const height = 800;
+                        const left = (screen.width - width) / 2;
+                        const top = (screen.height - height) / 2;
+                        const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`;
+                        
+                        // Open AWTRIX settings page for the selected device
+                        window.open(`http://${deviceSelect.value}/`, 'awtrix_settings', features);
+                    } else {
+                        alert('Please select an AWTRIX device first');
+                    }
+                } catch (error) {
+                    console.error('Error opening AWTRIX settings:', error);
+                    // Fallback if there's an error
+                    const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+                    if (deviceSelect && deviceSelect.value) {
+                        window.open(`http://${deviceSelect.value}/`, '_blank');
+                    }
+                }
+            };
+
+            // Update AWTRIX settings link when device is selected
+            const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+            if (deviceSelect) {
+                deviceSelect.addEventListener('change', function() {
+                    const awtrixSettingsLink = document.getElementById('awtrixSettingsLink');
+                    if (awtrixSettingsLink && deviceSelect.value) {
+                        // Just update the data attribute instead of href
+                        awtrixSettingsLink.setAttribute('data-device', deviceSelect.value);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
