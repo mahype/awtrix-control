@@ -63,7 +63,7 @@ export class CustomAppControl extends SingletonAction<CustomAppSettings> {
           payload.fadeText = fadeValue;
         }
       }
-      if (settings.scroll !== undefined) payload.scrollText = settings.scroll;
+      if (settings.noScroll !== undefined) payload.noScroll = settings.noScroll;
       if (settings.backgroundColor) payload.background = settings.backgroundColor;
       if (settings.rainbow !== undefined) payload.rainbow = settings.rainbow;
 
@@ -133,7 +133,7 @@ export interface CustomAppSettings extends JsonObject {
   centerText?: boolean;
   blinkText?: number;
   fadeText?: number;
-  scroll?: boolean;
+  noScroll?: boolean;
   backgroundColor?: string;
   repeatCount?: number;
   duration?: number;
