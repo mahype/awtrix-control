@@ -7,3 +7,6 @@ node_modules/
 *.sdPlugin/bin
 *.sdPlugin/logs
 *.streamDeckPlugin
+
+# IDE
+.vscode
