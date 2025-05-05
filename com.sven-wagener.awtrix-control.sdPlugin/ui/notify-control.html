@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Notify Control Settings</title>
+    <script src="../lib/awtrix-devices.js"></script>
+    <script src="../lib/sdpi-components.js"></script>
+    <script src="assets/device-select.js"></script>
+    <link rel="stylesheet" href="assets/device-select.css">
+    <style>
+        .color-preview {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Text Input -->
+    <sdpi-item label="Text">
+        <sdpi-textfield setting="text" placeholder="Text to display"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Icon ID -->
+    <sdpi-item label="Icon ID">
+        <sdpi-textfield setting="iconId" placeholder="Enter icon ID number"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Icon ID Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Search for icons in the <a href="javascript:void(0)" style="color: #cc3333; text-decoration: none;" onclick="openLaMetricGallery(); return false;">LaMetric Icon Gallery</a> and add the icon number in the <a href="javascript:void(0)" id="awtrixSettingsLink" style="color: #cc3333; text-decoration: none;" onclick="openAwtrixSettings(); return false;">AWTRIX settings</a> under "Icons" before using it here.
+        </div>
+    </sdpi-item>
+
+    <!-- Stick Icon -->
+    <sdpi-item label="Stick Icon">
+        <sdpi-checkbox setting="stickIcon" label="Icon sticks to the left"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Text Color -->
+    <sdpi-item label="Text Color">
+        <sdpi-color setting="color" value="#FFFFFF"></sdpi-color>
+    </sdpi-item>
+
+    <!-- Background Color -->
+    <sdpi-item label="Background Color">
+        <sdpi-color setting="backgroundColor" value="#000000"></sdpi-color>
+    </sdpi-item>
+
+    <!-- Rainbow Text -->
+    <sdpi-item label="Rainbow Text">
+        <sdpi-checkbox setting="rainbow" label="Use rainbow colors for text"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Center Text -->
+    <sdpi-item label="Center Text">
+        <sdpi-checkbox setting="centerText" label="Center text on display"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Center Text Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Center Text only has an effect with short text that fits on the display.
+        </div>
+    </sdpi-item>
+
+    <!-- Fade Text -->
+    <sdpi-item label="Fade Text (ms)">
+        <sdpi-textfield setting="fadeText" value="0" placeholder="0 = no fading, e.g. 500 for 500ms"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Fade Text Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Fade Text does not work when Rainbow is activated.
+        </div>
+    </sdpi-item>
+
+    <!-- Blink Text -->
+    <sdpi-item label="Blink Text (ms)">
+        <sdpi-textfield setting="blinkText" value="0" placeholder="0 = no blinking, e.g. 500 for 500ms"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Blink Text Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: Blink Text does not work when Rainbow is activated.
+        </div>
+    </sdpi-item>
+
+    <!-- No scrolling -->
+    <sdpi-item label="No scrolling">
+        <sdpi-checkbox setting="noScroll" label="Disable scrolling for long text"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Repeat Count -->
+    <sdpi-item label="Repeat Count">
+        <sdpi-textfield setting="repeatCount" value="0" placeholder="-1 = infinite"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Duration -->
+    <sdpi-item label="Duration (ms)">
+        <sdpi-textfield setting="duration" value="5000" placeholder="Time in ms how long the notification should be displayed"></sdpi-textfield>
+    </sdpi-item>
+
+    <!-- Hold Notification -->
+    <sdpi-item label="Hold Notification">
+        <sdpi-checkbox setting="hold" label="Keep notification until dismissed"></sdpi-checkbox>
+    </sdpi-item>
+
+    <!-- Hold Notification Info -->
+    <sdpi-item>
+        <div class="info-text" style="font-size: 11px; color: #999; padding: 4px 0;">
+            Note: When enabled, the notification will stay on screen until manually dismissed or replaced by another notification.
+        </div>
+    </sdpi-item>
+
+    <!-- Device Select -->
+    <sdpi-item label="Device">
+        <sdpi-select setting="device">
+            <option>No device selected...</option>
+            <!-- Additional options will be populated dynamically -->
+        </sdpi-select>
+    </sdpi-item>
+    
+    <sdpi-item>
+        <sdpi-button id="searchDevicesBtn" onclick="searchForDevices(event)">Search for Devices</sdpi-button>
+        <div id="scanStatus" class="scan-status">
+            <div id="ipRanges"></div>
+            Scanning: <span id="currentIp">-</span>
+        </div>
+        <div id="terminalOutput" class="terminal-output">
+            <!-- Hier werden gefundene Geräte sofort angezeigt -->
+        </div>
+    </sdpi-item>
+    <!-- End of Device Select -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Update AWTRIX settings link when device is selected
+            const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+            if (deviceSelect) {
+                deviceSelect.addEventListener('change', function() {
+                    updateAwtrixSettingsLink();
+                });
+            }
+
+            // Initial update of AWTRIX settings link
+            updateAwtrixSettingsLink();
+        });
+
+        // Function to open LaMetric Icon Gallery in a large window
+        function openLaMetricGallery() {
+            const width = 1200;
+            const height = 800;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            window.open(
+                'https://developer.lametric.com/icons',
+                'lametricGallery',
+                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+            );
+        }
+
+        // Function to open AWTRIX settings
+        function openAwtrixSettings() {
+            const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+            let deviceIp = '';
+            
+            if (deviceSelect && deviceSelect.value && deviceSelect.value !== 'No device selected...') {
+                deviceIp = deviceSelect.value;
+            }
+            
+            const width = 1200;
+            const height = 800;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            const url = deviceIp ? `http://${deviceIp}` : 'about:blank';
+            
+            window.open(
+                url,
+                'awtrixSettings',
+                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+            );
+        }
+
+        // Function to update the AWTRIX settings link based on selected device
+        function updateAwtrixSettingsLink() {
+            const deviceSelect = document.querySelector('sdpi-select[setting="device"]');
+            const awtrixSettingsLink = document.getElementById('awtrixSettingsLink');
+            
+            if (awtrixSettingsLink) {
+                if (deviceSelect && deviceSelect.value && deviceSelect.value !== 'No device selected...') {
+                    awtrixSettingsLink.style.opacity = '1';
+                    awtrixSettingsLink.style.pointerEvents = 'auto';
+                } else {
+                    awtrixSettingsLink.style.opacity = '0.5';
+                    awtrixSettingsLink.style.pointerEvents = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
