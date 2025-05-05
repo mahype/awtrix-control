@@ -116,7 +116,7 @@ The plugin is developed with TypeScript and the official Elgato Stream Deck SDK.
 
 For development, the following resources are helpful:
 
-- AWTRIX 3 GitHub: [https://github.com/Blueforcer/awtrix3](https://github.com/Blueforcer/awtrix3)
+- [AWTRIX 3 GitHub Page](https://github.com/Blueforcer/awtrix3)
 - [Elgato Stream Deck SDK Documentation](https://developer.elgato.com/documentation/stream-deck/sdk/overview/)
 - [Stream Deck SDK JavaScript API](https://developer.elgato.com/documentation/stream-deck/sdk/javascript-api/)
 - [Stream Deck SDK Property Inspector](https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/)
@@ -128,7 +128,7 @@ For development, the following resources are helpful:
 
 This plugin would not be possible without the excellent work of [Blueforcer](https://github.com/Blueforcer), the developer of the AWTRIX software. A big thank you for developing this fantastic LED matrix platform and providing a comprehensive API.
 
-- AWTRIX 3 GitHub: [https://github.com/Blueforcer/awtrix3](https://github.com/Blueforcer/awtrix3)
+- [AWTRIX 3 GitHub](https://github.com/Blueforcer/awtrix3)
 
 ## License
 
