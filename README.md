@@ -132,7 +132,7 @@ This plugin would not be possible without the excellent work of [Blueforcer](htt
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for more information.
+This project is licensed under the MIT License. See [LICENSE](LICENSE.md) for more information.
 
 ## Support
 
